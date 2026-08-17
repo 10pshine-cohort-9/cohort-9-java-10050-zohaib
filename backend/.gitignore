@@ -1,0 +1,6 @@
+# Backend-specific ignores (supplements root .gitignore)
+target/
+*.jar
+*.war
+logs/
+.mvn/wrapper/maven-wrapper.jar
