@@ -4,3 +4,5 @@ target/
 *.war
 logs/
 .mvn/wrapper/maven-wrapper.jar
+.env
+node_modules/
