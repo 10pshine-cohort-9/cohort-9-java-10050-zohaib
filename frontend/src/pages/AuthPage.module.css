@@ -1,133 +1,99 @@
-/* Shared styles for Login, Register, and ChangePassword pages */
-
 .container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: calc(100vh - 64px);
+  align-items: center;
+  min-height: calc(100vh - 60px);
   padding: 40px 16px;
-  background-color: #f4f6f8;
+  background: linear-gradient(135deg, #1e3a5f 0%, #1d4ed8 60%, #3b82f6 100%);
 }
 
 .card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  padding: 40px 36px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  padding: 44px 40px;
   width: 100%;
   max-width: 480px;
 }
 
-.title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  margin-bottom: 6px;
-}
+.title   { font-size: 1.8rem; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+.subtitle{ font-size: 0.95rem; color: #64748b; margin-bottom: 28px; line-height: 1.5; }
 
-.subtitle {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 28px;
-}
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-/* Two-column row (first + last name) */
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
+.field { display: flex; flex-direction: column; margin-bottom: 18px; }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 18px;
-}
-
-.label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 6px;
-}
+.label { font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 6px; }
 
 .input {
-  padding: 10px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  padding: 11px 44px 11px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 7px;
   font-size: 0.95rem;
-  color: #111827;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #0f172a;
+  background: #f8fafc;
   outline: none;
-  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
+  width: 100%;
 }
 
-.input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+.input:focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.12); }
+
+.inputError { border-color: #dc2626; }
+.inputError:focus { box-shadow: 0 0 0 3px rgba(220,38,38,0.10); }
+
+.errorMsg { font-size: 0.82rem; color: #dc2626; margin-top: 4px; }
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
-.inputError {
-  border-color: #ef4444;
+.eyeBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  transition: color 0.15s;
+  line-height: 1;
+  font-size: 1rem;
 }
 
-.inputError:focus {
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
-}
-
-.errorMsg {
-  font-size: 0.78rem;
-  color: #ef4444;
-  margin-top: 4px;
-}
+.eyeBtn:hover { color: #334155; }
 
 .submitBtn {
   width: 100%;
-  padding: 12px;
-  background-color: #4f46e5;
+  padding: 13px;
+  background: #3b82f6;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 7px;
+  font-size: 0.97rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, opacity 0.2s;
   margin-top: 8px;
+  transition: background 0.15s;
 }
 
-.submitBtn:hover:not(:disabled) {
-  background-color: #4338ca;
-}
+.submitBtn:hover:not(:disabled) { background: #2563eb; }
+.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.submitBtn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
+.footer { text-align: center; font-size: 0.9rem; color: #64748b; margin-top: 22px; }
 
-.footer {
-  text-align: center;
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 24px;
-}
+.link { color: #3b82f6; font-weight: 600; text-decoration: none; }
+.link:hover { text-decoration: underline; }
 
-.link {
-  color: #4f46e5;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 28px 20px;
-  }
-
-  .row {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
+@media (max-width: 520px) {
+  .card { padding: 30px 20px; }
+  .row  { grid-template-columns: 1fr; gap: 0; }
 }
