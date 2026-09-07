@@ -1,0 +1,148 @@
+services:
+
+  # ─────────────────────────────────────────
+  # 1. SQL Server 2022
+  # ─────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: contact_mgmt_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "${SA_PASSWORD}"
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test:
+        - CMD
+        - /opt/mssql-tools18/bin/sqlcmd
+        - -S
+        - localhost
+        - -U
+        - sa
+        - -P
+        - "${SA_PASSWORD}"
+        - -C
+        - -Q
+        - "SELECT 1"
+        - -b
+      interval: 10s
+      timeout: 8s
+      retries: 15
+      start_period: 45s
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  # 2. DB Initialiser (runs once then exits)
+  # ─────────────────────────────────────────
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: contact_mgmt_db_init
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      SA_PASSWORD: "${SA_PASSWORD}"
+    volumes:
+      - ./database/init:/init:ro
+    entrypoint: /bin/bash
+    command: ["/init/run-init.sh"]
+    restart: "no"
+
+  # ─────────────────────────────────────────
+  # 3. Spring Boot Backend
+  # ─────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: contact_mgmt_backend
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_USERNAME: "${DB_USERNAME}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      JWT_SECRET: "${JWT_SECRET}"
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend_logs:/app/logs
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "wget -q --tries=1 -O /dev/null http://localhost:8080/api/auth/register 2>&1 | grep -q '' && exit 0 || exit 1"
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  # 4. React Frontend (Nginx)
+  # ─────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    container_name: contact_mgmt_frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  # 5. SonarQube (optional)
+  #    Start with: docker compose --profile sonar up
+  # ─────────────────────────────────────────
+  sonarqube:
+    image: sonarqube:10-community
+    container_name: contact_mgmt_sonarqube
+    profiles:
+      - sonar
+    depends_on:
+      sonardb:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonardb:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: "${SONAR_DB_PASSWORD:-sonar}"
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: unless-stopped
+
+  sonardb:
+    image: postgres:15-alpine
+    container_name: contact_mgmt_sonardb
+    profiles:
+      - sonar
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: "${SONAR_DB_PASSWORD:-sonar}"
+      POSTGRES_DB: sonar
+    volumes:
+      - sonardb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+  backend_logs:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonardb_data:

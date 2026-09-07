@@ -1,0 +1,35 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f1f5f9;
+  color: #334155;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  font-size: 1rem;
+}
+
+h1,h2,h3,h4,h5,h6 { color: #0f172a; font-weight: 700; line-height: 1.3; }
+
+a { color: #3b82f6; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button, input, select, textarea { font-family: inherit; font-size: 1rem; }
+button { cursor: pointer; }
+
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px 52px;
+}
+
+:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; border-radius: 3px; }
+
+@media (max-width: 768px) { .main-content { padding: 20px 14px 40px; } }
